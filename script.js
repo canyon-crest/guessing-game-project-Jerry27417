@@ -6,12 +6,14 @@ date.textContent = time();
 // add event listeners
 playBtn.addEventListener("click", play);
 guessBtn.addEventListener("click", makeGuess);
+giveUp.addEventListener("click", userGiveUp);
 
 function play(){
     score=0; //sets score to 0 every new game
     playBtn.disabled=true;
     guessBtn.disabled=false;
     guess.disabled = false;
+    giveUp.disabled = false;
     for(let i=0;i<levelArr.length;i++){
         if(levelArr[i].checked){
             level = levelArr[i].value;
@@ -20,7 +22,6 @@ function play(){
     }
     msg.textContent = "Guess a number from 1-"+level;
     answer = Math.floor(Math.random()*level)+1;
-    guess.placeholder=answer;
 }
 
 function makeGuess(){
@@ -30,21 +31,33 @@ function makeGuess(){
         return;
     }
     score++; //valid guess add 1 to score
-    if(userGuess > answer){
-        msg.textContent ="Too high";
+    if(userGuess > (answer+10)||userGuess<(answer-10)){
+        msg.textContent ="Cold";
     }
-    else if(userGuess<answer){
-        msg.textContent ="Too low";
+    else if(userGuess<answer||userGuess>answer){
+        msg.textContent ="Warm";
     }
     else{
-        msg.textContent = "Correct! You took " + score + " tries. Press play to play again.";
         updateScore();
         reset(); //jumps to reset function
+        if(score<=5){
+            msg.textContent = "Good job. It took you " + score + " tries. Press play to play again.";
+        }
+        else if(score<=10){
+            msg.textContent = "Okay. It took you " + score + " tries. Press play to play again.";
+        }
+        else{
+            msg.textContent = "Bad. It took you " + score + " tries . Press play to play again.";
+        }
     }
+}
+function userGiveUp(){
+    reset();
 }
 function reset(){
     guessBtn.disabled=true;
     guess.disabled=true;
+    giveUp.disabled=true;
     guess.value = "";
     guess.placeholder="";
     playBtn.disabled=false;
@@ -69,6 +82,31 @@ function updateScore(){
 }
 function time(){
     let d = new Date();
-    //concatenate a string with all the date info...
-    return d;
+
+    const months = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"];
+    
+    
+    let monthName = months[d.getMonth()];
+    let day = d.getDate();
+    let year = d.getFullYear();
+    let seconds = d.getSeconds();
+    return monthName + " " + addSuffix(day) + ", " + year + ", " + seconds;
 }
+function addSuffix(day) {
+    if (day >= 11 && day <= 13) {
+        return day + "th";
+    }
+    switch (day % 10) {
+        case 1: return day + "st";
+        case 2: return day + "nd";
+        case 3: return day + "rd";
+        default: return day + "th";
+    }
+}
+function updateTimeDisplay() {
+    date.textContent = time();
+}
+
+updateTimeDisplay();
+setInterval(updateTimeDisplay, 1000);
