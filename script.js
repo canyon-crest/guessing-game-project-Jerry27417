@@ -59,7 +59,6 @@ function reset(){
     guess.disabled=true;
     giveUp.disabled=true;
     guess.value = "";
-    guess.placeholder="";
     playBtn.disabled=false;
     for(let i=0;i<levelArr.length;i++){
         levelArr[i].disabled=false;
